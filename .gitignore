@@ -1,0 +1,95 @@
+# Stwórz plik .gitignore
+cat > ~/licencjat_neuro/magisterka/.gitignore << 'EOF'
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.manifest
+*.spec
+
+# Virtual environments
+venv/
+venv_*/
+ENV/
+env/
+.venv
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Data files (usuń linijki dla plików, które CHCESZ w repo)
+*.h5
+*.hdf5
+*.mat
+*.fif
+*.set
+*.edf
+*.bdf
+data/raw/
+data/processed/
+baza_*/
+*.zip
+*.tar.gz
+
+# Large binary files
+*.pkl
+*.pickle
+*.npy
+*.npz
+
+# Models and checkpoints
+models/
+checkpoints/
+*.pth
+*.pt
+*.ckpt
+
+# Logs and results
+logs/
+results/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+
+EOF__pycache__/
+*.pyc
