@@ -1,4 +1,4 @@
-# src/preprocessing/processor.py
+# src/preprocessing/processing.py
 
 from typing import Optional
 import mne
@@ -30,7 +30,7 @@ class EEGPreprocessor:
     def from_edf(cls, edf_path: str, institution_id: Optional[str] = None, preload=True):
         raw = mne.io.read_raw_edf(edf_path, preload=preload)
         if institution_id is not None:
-            raw = apply_mor_data_hack_fix(raw, edf_path, institution_id)
+            raw = apply_mor_data_hack_fix(raw, edf_path, institution_id) 
         return cls(raw)
 
     # ============ CHANNELS ============
