@@ -1,5 +1,6 @@
 # src/preprocessing/frame_exporter.py
 
+
 from typing import Dict, List, Optional, Tuple, Union
 import numpy as np
 import mne
@@ -21,7 +22,7 @@ class EEGFrameExporter:
     
     def __init__(
         self,
-        selector: 'EEGFrameSelector',
+        selector: 'EEGFrameSelector', 
         output_dir: Union[str, Path] = "output",
         exclude_events: Optional[List[str]] = None
     ):
@@ -679,7 +680,7 @@ class EEGFrameExporter:
             'timestamp': self.timestamp
         }
     
-    # ============ UTILITY ============
+    # ============ LOADING UTILITY ============
     
     @staticmethod
     def load_frames(filepath: Union[str, Path]) -> Dict:
@@ -698,6 +699,106 @@ class EEGFrameExporter:
         """
         data = np.load(filepath, allow_pickle=True)
         return {key: data[key] for key in data.files}
+    
+    @staticmethod
+    def load_all_groups(frames_dir: Union[str, Path]) -> Dict[str, np.ndarray]:
+        """
+        Load all frame groups from directory.
+        Returns dictionary with group names and frames arrays.
+        
+        Parameters
+        ----------
+        frames_dir : str or Path
+            Directory containing .npz frame files
+            
+        Returns
+        -------
+        groups : dict
+            Dictionary mapping group names to frames arrays
+            Example: {'eyes_opened': array(n_frames, n_channels, n_samples), ...}
+            
+        Examples
+        --------
+        >>> groups = EEGFrameExporter.load_all_groups("notebooks/demoDTF/frames")
+        >>> frames = groups['eyes_opened']
+        >>> print(frames.shape)
+        (10, 19, 768)
+        """
+        import re
+        
+        frames_dir = Path(frames_dir)
+        if not frames_dir.exists():
+            raise ValueError(f"Directory not found: {frames_dir}")
+        
+        frame_files = sorted(frames_dir.glob("*_frames_*.npz"))
+        
+        if not frame_files:
+            print(f"⚠️  No frame files found in {frames_dir}")
+            return {}
+        
+        groups = {}
+        
+        for filepath in frame_files:
+            # Extract group name from filename: {name}_frames_{timestamp}.npz
+            stem = filepath.stem
+            match = re.match(r'(.+)_frames_\d{8}_\d{6}', stem)
+            group_name = match.group(1) if match else stem
+            
+            # Load only frames array
+            data = np.load(filepath, allow_pickle=True)
+            groups[group_name] = data['frames']
+        
+        return groups
+    
+    @staticmethod
+    def load_group_info(frames_dir: Union[str, Path]) -> Dict[str, Dict]:
+        """
+        Load metadata (channel names, sfreq) for all groups.
+        
+        Parameters
+        ----------
+        frames_dir : str or Path
+            Directory containing .npz frame files
+            
+        Returns
+        -------
+        info : dict
+            Dictionary mapping group names to metadata dicts
+            Example: {'eyes_opened': {'channel_names': [...], 'sfreq': 128}, ...}
+            
+        Examples
+        --------
+        >>> info = EEGFrameExporter.load_group_info("notebooks/demoDTF/frames")
+        >>> print(info['eyes_opened']['sfreq'])
+        128.0
+        """
+        import re
+        
+        frames_dir = Path(frames_dir)
+        if not frames_dir.exists():
+            raise ValueError(f"Directory not found: {frames_dir}")
+        
+        frame_files = sorted(frames_dir.glob("*_frames_*.npz"))
+        
+        if not frame_files:
+            return {}
+        
+        info_dict = {}
+        
+        for filepath in frame_files:
+            # Extract group name
+            stem = filepath.stem
+            match = re.match(r'(.+)_frames_\d{8}_\d{6}', stem)
+            group_name = match.group(1) if match else stem
+            
+            # Load metadata
+            data = np.load(filepath, allow_pickle=True)
+            info_dict[group_name] = {
+                'channel_names': list(data['channel_names']),
+                'sfreq': float(data['sfreq'])
+            }
+        
+        return info_dict
     
     def print_summary(self):
         """Print summary of export."""
