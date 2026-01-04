@@ -719,7 +719,7 @@ class EEGFrameExporter:
             
         Examples
         --------
-        >>> groups = EEGFrameExporter.load_all_groups("notebooks/demoDTF/frames")
+        >>> groups = EEGFrameExporter.load_all_groups("results/demoDTF/frames")
         >>> frames = groups['eyes_opened']
         >>> print(frames.shape)
         (10, 19, 768)
@@ -768,7 +768,7 @@ class EEGFrameExporter:
             
         Examples
         --------
-        >>> info = EEGFrameExporter.load_group_info("notebooks/demoDTF/frames")
+        >>> info = EEGFrameExporter.load_group_info("results/demoDTF/frames")
         >>> print(info['eyes_opened']['sfreq'])
         128.0
         """

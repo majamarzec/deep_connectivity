@@ -1,16 +1,15 @@
-# Stwórz plik .gitignore
+#   plik .gitignore
 cat > ~/licencjat_neuro/magisterka/.gitignore << 'EOF'
-# Python
+
+# === Python & Build ===
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-*.egg
-*.egg-info/
-dist/
 build/
 develop-eggs/
+dist/
 downloads/
 eggs/
 .eggs/
@@ -20,35 +19,36 @@ parts/
 sdist/
 var/
 wheels/
-pip-wheel-metadata/
 share/python-wheels/
-*.manifest
-*.spec
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Virtual environments
+# === Virtual environments ===
 venv/
 venv_*/
 ENV/
 env/
-.venv
+.venv/
 
-# Jupyter Notebook
+# === Jupyter Notebook & IPython ===
 .ipynb_checkpoints
-*.ipynb_checkpoints/
-
-# IPython
+*/.ipynb_checkpoints/*
 profile_default/
 ipython_config.py
+# Demo outputs in notebooks
+notebooks/demoDTF/
 
-# IDE
+# === IDE ===
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-.DS_Store
 
-# Data files (usuń linijki dla plików, które CHCESZ w repo)
+# === Dane i pliki binarne (Neuroscience/ML) ===
+# Odkomentuj (usuń #), jeśli chcesz coś z tego jednak trzymać na Gicie
 *.h5
 *.hdf5
 *.mat
@@ -56,40 +56,25 @@ ipython_config.py
 *.set
 *.edf
 *.bdf
-data/raw/
-data/processed/
-baza_*/
-*.zip
-*.tar.gz
-
-# Large binary files
 *.pkl
 *.pickle
 *.npy
 *.npz
+data/
+baza_*/
+*.zip
+*.tar.gz
 
-# Models and checkpoints
+# === Modele i wyniki ===
 models/
 checkpoints/
 *.pth
 *.pt
 *.ckpt
-
-# Logs and results
 logs/
 results/
 *.log
 
-# OS
+# === Systemowe ===
 .DS_Store
 Thumbs.db
-
-# Temporary files
-*.tmp
-*.temp
-*.bak
-*.swp
-*~
-
-EOF__pycache__/
-*.pyc

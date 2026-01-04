@@ -2,8 +2,13 @@
 
 from typing import Optional
 import mne
+from mne.io import BaseRaw
 import numpy as np
 from scipy.signal import iirnotch, butter
+
+from pathlib import Path
+
+print(Path(__file__).resolve())
 
 from .constants import (
     BASE_DIR, BASE_CSV_PATH, EDF_DIR,
@@ -22,7 +27,7 @@ class EEGPreprocessor:
     Main EEG preprocessing pipeline (EDF → standardized channels → filters → rereference...).
     """
 
-    def __init__(self, raw: mne.io.Raw):
+    def __init__(self, raw: mne.io.BaseRaw):
         self.raw = raw
 
     # ============ LOADER ============

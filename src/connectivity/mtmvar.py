@@ -5,6 +5,30 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import networkx as nx
 
+def remove_channels(eeg, ch_names, channels_to_remove):
+
+    if isinstance(channels_to_remove, str):
+        channels_to_remove = [channels_to_remove]
+
+    # indeksy kanałów do usunięcia
+    remove_idx = [
+        i for i, ch in enumerate(ch_names)
+        if ch in channels_to_remove
+    ]
+
+    if len(remove_idx) == 0:
+        raise ValueError("Żaden z podanych kanałów nie istnieje w CH_NAMES")
+
+    # usunięcie kanałów z EEG
+    eeg_new = np.delete(eeg, remove_idx, axis=0)
+
+    # usunięcie nazw kanałów
+    ch_names_new = [
+        ch for ch in ch_names if ch not in channels_to_remove
+    ]
+
+    return eeg_new, ch_names_new
+
 def countCorr(x, ip, iwhat):
     '''
     Internal procedure 
