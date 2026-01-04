@@ -8,12 +8,10 @@ from scipy.signal import iirnotch, butter
 
 
 from preprocessing.constants import (
-    BASE_DIR, BASE_CSV_PATH, EDF_DIR,
     CH_NAMES, VALID_1020, CHNAMES_MAPPING,
-    FREQ_BANDS, FREQ_BANDS_NAMES,
     DEFAULT_NOTCH_FREQ, DEFAULT_NOTCH_Q,
-    DEFAULT_HP_CUTOFF, DEFAULT_LP_CUTOFF, DEFAULT_MONTAGE,
-    DEFAULT_SFREQ, DEFAULT_PERCENTILE, DEFAULT_IIR_ORDER
+    DEFAULT_HP_CUTOFF, DEFAULT_LP_CUTOFF, AVERAGE_MONTAGE, AVERAGE_CH_TO_REMOVE,
+    DEFAULT_SFREQ, DEFAULT_PERCENTILE,
 )
 
 from preprocessing.utils import apply_mor_data_hack_fix
@@ -149,7 +147,7 @@ class EEGPreprocessor:
         return raw
 
     # ============ REFERENCE & RESAMPLE ============
-    def rereference(self, ref_channels=DEFAULT_MONTAGE, verbose=False):
+    def rereference(self, ref_channels=AVERAGE_MONTAGE, verbose=False):
         self.raw.set_eeg_reference(ref_channels, verbose=verbose)
         return self
 
@@ -157,11 +155,23 @@ class EEGPreprocessor:
         if self.raw.info["sfreq"] != sfreq:
             self.raw.resample(float(sfreq), verbose=verbose)
         return self
+    
+    # ============ REMOVE ONE CHANNEL (MVAR PRELIMINARY) ============
+
+    def drop_channel(self, channel_name = AVERAGE_CH_TO_REMOVE):
+
+        if channel_name in self.raw.ch_names:
+            self.raw.drop_channels([channel_name])
+            print(f"[Drop Channel] Removed: {channel_name}")
+        else:
+            print(f"[Drop Channel] Warning: '{channel_name}' not found")
+        return self
 
     # ============ FULL PIPELINE ============
     def preprocess(
         self,
-        ref_channels=DEFAULT_MONTAGE,
+        ref_channels=AVERAGE_MONTAGE,
+        ch_to_drop = AVERAGE_CH_TO_REMOVE,
         sfreq=DEFAULT_SFREQ,
         notch_freq=DEFAULT_NOTCH_FREQ,
         notch_q=DEFAULT_NOTCH_Q,
@@ -181,9 +191,11 @@ class EEGPreprocessor:
             fs=None
         )
         self.rereference(ref_channels)
+        self.drop_channel(ch_to_drop)
 
         if plot:
             scaling = {"eeg": np.percentile(np.abs(self.raw.get_data()), percentile)}
             self.raw.plot(scalings=scaling)
+        
 
         return self.raw

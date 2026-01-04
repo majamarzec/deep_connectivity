@@ -146,7 +146,7 @@ BAND_LIMITS_POW = np.array([[i[0][0], i[0][1], i[1]] for i in list(zip(FREQ_BAND
 BAND_LIMITS_POW_PH = np.array([[i[0][0], i[0][1], i[1]] for i in list(zip(FREQ_BANDS_PH, FREQ_BANDS_PH_BAND_NAMES))])
 
 # ============================================================================
-# DEFAULT PARAMETERS
+# DEFAULT FILETRING PARAMETERS
 # ============================================================================
 
 
@@ -156,7 +156,21 @@ DEFAULT_IIR_ORDER = 4
 DEFAULT_HP_CUTOFF = 1.0
 DEFAULT_LP_CUTOFF = 40.0
 
+# ============================================================================
+# DEFAULT OTHERS
+# ============================================================================
+
 DEFAULT_SFREQ = 128
 DEFAULT_PERCENTILE = 97.5
-DEFAULT_MONTAGE = "average"
+
+# ============================================================================
+# MONTAGE AND CORRESPONDING CHANNEL REMOVAL
+# ============================================================================
+AVERAGE_MONTAGE = "average"
+AVERAGE_CH_TO_REMOVE = ["Fz"]
+CZ_MONTAGE = ["Cz"]
+CZ_CH_TO_REMOVE = "Cz"
+FZ_MONTAGE = ["Fz"]
+FZ_CH_TO_REMOVE = "Fz"
+
 
