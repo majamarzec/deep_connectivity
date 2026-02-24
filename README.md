@@ -40,45 +40,36 @@ magisterka/
 
 The project uses a class-based approach for better organization and reusability:
 
-## 🧠 EEG Data Preprocessing Pipeline
+### 1. **EEGPreprocessor**
+Main EEG preprocessing pipeline:
+- **Loading**: Wczytywanie plików EDF z obsługą poprawek specyficznych dla placówek medycznych (*institution-specific fixes*).
+- **Channel Standardization**: Automatyczne mapowanie nazw kanałów do systemu 10/20, ujednolicanie kolejności oraz nakładanie standardowego montażu.
+- **Filtering**: Zastosowanie filtrów Notch (50/60 Hz) oraz pasmowych (Butterworth zero-phase) przy użyciu stabilnych numerycznie sekcji SOS.
+- **Re-referencing**: Możliwość zmiany referencji (Common Average, Linked Ears lub wskazany kanał).
+- **Resampling**: Zmiana częstotliwości próbkowania w celu optymalizacji obliczeń.
+- **Visualization**: Zintegrowane wykresy widma mocy (PSD) oraz mapy rozmieszczenia elektrod.
 
-`EEGPreprocessor` is a robust, MNE-based tool designed for standardizing and cleaning EEG data across different medical institutions. It ensures that raw EDF files are transformed into a clean, uniform format ready for advanced analysis like **MVAR (Multivariate Autoregressive Models)**.
 
-### ✨ Key Features
-* **Smart Loading**: Specialized EDF loader with institution-specific fixes (e.g., handling data artifacts from different hospitals).
-* **Channel Standardization**: 
-    * Automatic mapping of non-standard clinical names to the **International 10-20 System**.
-    * Automatic channel reordering for consistency across datasets.
-    * Standard montage application (`standard_1020`).
-* **Precision Filtering**:
-    * **Notch filter** (50/60 Hz) to remove power line noise.
-    * **Butterworth zero-phase filters** (High-pass & Low-pass) using `scipy.signal.sosfiltfilt` for maximum numerical stability.
-    * Automated filter order selection using `buttord` to meet specific passband/stopband requirements.
-* **Advanced Visualization**: 
-    * **PSD (Power Spectral Density)** plots to verify noise removal.
-    * **Sensor maps** to confirm correct electrode placement.
-    * Signal browsers for manual data inspection.
 
-### 🚀 Usage Example
-
+**Usage example:**
 ```python
 from preprocessing.processing import EEGPreprocessor
 
-# 1. Initialize from EDF
+# 1. Initialize and load EDF
 preprocessor = EEGPreprocessor.from_edf(
-    edf_path="data/recording.edf",
+    edf_path="path/to/file.edf",
     institution_id="SZC"
 )
 
-# 2. Run the full pipeline
-raw_clean = preprocessor.preprocess(
-    sfreq=128,              # Resample to 128Hz
-    ref_channels='average', # Common Average Reference (CAR)
-    hp_cutoff=1.0,          # High-pass to remove DC drift
-    lp_cutoff=45.0,         # Low-pass to remove high-frequency noise
-    notch_freq=50.0,        # Polish power grid frequency
-    plot_psd=True,          # Show frequency spectrum
-    plot_montage=True       # Show electrode locations
+# 2. Execute full preprocessing with visualization
+raw_processed = preprocessor.preprocess(
+    ref_channels='average',
+    sfreq=128,
+    hp_cutoff=1.0,
+    lp_cutoff=45.0,
+    notch_freq=50.0,
+    plot_psd=True,       # Wyświetla widmo mocy (dowód odszumienia)
+    plot_montage=True    # Wyświetla rozmieszczenie elektrod na głowie
 )
 
 ### 2. **EEGWindower**
