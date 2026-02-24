@@ -40,30 +40,46 @@ magisterka/
 
 The project uses a class-based approach for better organization and reusability:
 
-### 1. **EEGPreprocessor**
-Main EEG preprocessing pipeline:
-- Loading EDF files
-- Channel standardization (name mapping, reordering)
-- Filtering (highpass, lowpass, notch)
-- Re-referencing (common average, linked ears, single channel)
-- Resampling
+## 🧠 EEG Data Preprocessing Pipeline
 
-**Usage example:**
+`EEGPreprocessor` is a robust, MNE-based tool designed for standardizing and cleaning EEG data across different medical institutions. It ensures that raw EDF files are transformed into a clean, uniform format ready for advanced analysis like **MVAR (Multivariate Autoregressive Models)**.
+
+### ✨ Key Features
+* **Smart Loading**: Specialized EDF loader with institution-specific fixes (e.g., handling data artifacts from different hospitals).
+* **Channel Standardization**: 
+    * Automatic mapping of non-standard clinical names to the **International 10-20 System**.
+    * Automatic channel reordering for consistency across datasets.
+    * Standard montage application (`standard_1020`).
+* **Precision Filtering**:
+    * **Notch filter** (50/60 Hz) to remove power line noise.
+    * **Butterworth zero-phase filters** (High-pass & Low-pass) using `scipy.signal.sosfiltfilt` for maximum numerical stability.
+    * Automated filter order selection using `buttord` to meet specific passband/stopband requirements.
+* **Advanced Visualization**: 
+    * **PSD (Power Spectral Density)** plots to verify noise removal.
+    * **Sensor maps** to confirm correct electrode placement.
+    * Signal browsers for manual data inspection.
+
+### 🚀 Usage Example
+
 ```python
 from preprocessing.processing import EEGPreprocessor
 
-# Load and preprocess
+# 1. Initialize from EDF
 preprocessor = EEGPreprocessor.from_edf(
-    edf_path="path/to/file.edf",
+    edf_path="data/recording.edf",
     institution_id="SZC"
 )
-raw_processed = preprocessor.preprocess(
-    ref_channels='average',
-    sfreq=128,
-    hp_cutoff=1.0,
-    lp_cutoff=40.0
+
+# 2. Run the full pipeline
+raw_clean = preprocessor.preprocess(
+    sfreq=128,              # Resample to 128Hz
+    ref_channels='average', # Common Average Reference (CAR)
+    hp_cutoff=1.0,          # High-pass to remove DC drift
+    lp_cutoff=45.0,         # Low-pass to remove high-frequency noise
+    notch_freq=50.0,        # Polish power grid frequency
+    plot_psd=True,          # Show frequency spectrum
+    plot_montage=True       # Show electrode locations
 )
-```
 
 ### 2. **EEGWindower**
 Segmentation and artifact detection:
