@@ -42,12 +42,12 @@ The project uses a class-based approach for better organization and reusability:
 
 ### 1. **EEGPreprocessor**
 Main EEG preprocessing pipeline:
-- **Loading**: Wczytywanie plików EDF z obsługą poprawek specyficznych dla placówek medycznych (*institution-specific fixes*).
-- **Channel Standardization**: Automatyczne mapowanie nazw kanałów do systemu 10/20, ujednolicanie kolejności oraz nakładanie standardowego montażu.
-- **Filtering**: Zastosowanie filtrów Notch (50/60 Hz) oraz pasmowych (Butterworth zero-phase) przy użyciu stabilnych numerycznie sekcji SOS.
-- **Re-referencing**: Możliwość zmiany referencji (Common Average, Linked Ears lub wskazany kanał).
-- **Resampling**: Zmiana częstotliwości próbkowania w celu optymalizacji obliczeń.
-- **Visualization**: Zintegrowane wykresy widma mocy (PSD) oraz mapy rozmieszczenia elektrod.
+- **Loading**: Loading EDF files with support for institution-specific data fixes.
+- **Channel Standardization**: Automatic channel name mapping to the 10/20 system, ujednolicanie (ordering), and application of standard montages.
+- **Filtering**: Application of Notch (50/60 Hz) and band-pass (Butterworth zero-phase) filters using numerically stable Second-Order Sections (SOS).
+- **Re-referencing**: Support for Common Average Reference (CAR), Linked Ears, or specific channel referencing.
+- **Resampling**: Adjusting the sampling frequency to optimize subsequent computational analysis (e.g., MVAR).
+- **Visualization**: Integrated Power Spectral Density (PSD) plots and sensor location topography maps.
 
 
 
@@ -68,9 +68,10 @@ raw_processed = preprocessor.preprocess(
     hp_cutoff=1.0,
     lp_cutoff=45.0,
     notch_freq=50.0,
-    plot_psd=True,       # Wyświetla widmo mocy (dowód odszumienia)
-    plot_montage=True    # Wyświetla rozmieszczenie elektrod na głowie
+    plot_psd=True,       # Displays power spectrum (proof of noise removal)
+    plot_montage=True    # Displays electrode placement on the scalp
 )
+```
 
 ### 2. **EEGWindower**
 Segmentation and artifact detection:
